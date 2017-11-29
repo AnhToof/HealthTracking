@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.g5team.healthtracking.Activities.DiagnoseActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Nhịp tim"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="Đo: "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_hear_rate_diagnose"
+                    android:text="                                                   "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="Chẩn đoán: "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_diagnose_heart_rate"
+                    android:text="                                                   "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="Chế độ dinh dưỡng: "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_nutrition_heart_rate"
+
+                    android:layout_weight="1"
+                    android:isScrollContainer="false"
+                    android:scrollHorizontally="true"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="false"
+                    android:text="                                                                                "
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textIsSelectable="false"
+                    android:textSize="18sp" />
+            </TableRow>
+
+        </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Huyết áp"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="Đo: "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_blood_pressure_diagnose"
+                    android:text="                                        "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="Chẩn đoán: "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_diagnose_blood_pressure"
+                    android:text="                                          "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="Chế độ dinh dưỡng: "
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_nutrition_blood_pressure"
+                    android:layout_weight="1"
+                    android:isScrollContainer="false"
+
+                    android:selectAllOnFocus="false"
+                    android:singleLine="false"
+                    android:text="                                                                           "
+                    android:textColor="@color/black"
+                    android:textIsSelectable="false"
+                    android:textSize="18sp" />
+            </TableRow>
+        </TableLayout>
+
+
+    </LinearLayout>
+
+</ScrollView>
