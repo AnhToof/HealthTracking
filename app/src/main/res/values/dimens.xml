@@ -5,9 +5,14 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="width_height_progress">500dp</dimen>
+    <dimen name="width_height_progress">400dp</dimen>
     <dimen name="width_arc_background">5dp</dimen>
     <dimen name="width_arc_primary">5dp</dimen>
     <dimen name="text_size_progress">20sp</dimen>
+    <dimen name="tab_max_width">264dp</dimen>
+    <dimen name="tab_padding_bottom">16dp</dimen>
+    <dimen name="tab_label">14sp</dimen>
+    <dimen name="custom_tab_layout_height">50dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
 
 </resources>

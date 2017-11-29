@@ -10,7 +10,7 @@
             android:title="Thông Tin Cá Nhân" />
         <item
             android:id="@+id/nav_exit"
-            android:title="Thoát" />
+            android:title="Đăng Xuất" />
     </group>
 
 

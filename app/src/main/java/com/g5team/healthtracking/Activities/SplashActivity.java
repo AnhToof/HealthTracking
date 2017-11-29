@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity{
             public void onClick(View v) {
                 Intent intent = new Intent(SplashActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -32,6 +33,7 @@ public class SplashActivity extends AppCompatActivity{
             public void onClick(View v) {
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

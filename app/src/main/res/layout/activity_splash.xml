@@ -52,14 +52,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Đăng Nhập" />
+            android:layout_margin="10dp"
+            android:text="Đăng Nhập"
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/btn_register_sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Đăng Ký" />
+            android:layout_margin="10dp"
+            android:text="Đăng Ký"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

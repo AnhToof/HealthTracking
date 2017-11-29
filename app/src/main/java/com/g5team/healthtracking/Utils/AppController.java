@@ -1,6 +1,7 @@
 package com.g5team.healthtracking.Utils;
 
 import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -18,19 +19,28 @@ public class AppController extends Application {
 
     private static AppController mInstance;
 
+    Context context;
+
+    private AppController(Context context)
+    {
+        this.context = context;
+        mRequestQueue = getRequestQueue();
+    }
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
     }
 
-    public static synchronized AppController getInstance() {
+    public static synchronized AppController getInstance(Context context) {
+        if(mInstance == null)
+            mInstance = new AppController(context);
         return mInstance;
     }
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(context.getApplicationContext());
         }
 
         return mRequestQueue;

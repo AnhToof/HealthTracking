@@ -18,7 +18,11 @@ android {
         }
     }
 }
-
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -29,5 +33,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'com.jjoe64:graphview:4.2.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     testCompile 'junit:junit:4.12'
 }

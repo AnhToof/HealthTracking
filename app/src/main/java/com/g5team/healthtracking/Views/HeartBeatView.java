@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.g5team.healthtracking.Fragments.HomeFragment;
+import com.g5team.healthtracking.Fragments.MeasureFragment;
 import com.g5team.healthtracking.R;
 
 /**
@@ -61,7 +61,7 @@ public class HeartBeatView extends View {
         if (canvas == null) throw new NullPointerException();
 
         Bitmap bitmap = null;
-        if (HomeFragment.getCurrent() == HomeFragment.TYPE.DARK) bitmap = darkBitmap;
+        if (MeasureFragment.getCurrent() == MeasureFragment.TYPE.DARK) bitmap = darkBitmap;
         else bitmap = redBitmap;
 
         int bitmapX = bitmap.getWidth() / 2;

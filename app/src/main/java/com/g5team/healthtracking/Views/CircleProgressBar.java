@@ -14,7 +14,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
-import com.g5team.healthtracking.Fragments.HomeFragment;
+import com.g5team.healthtracking.Fragments.MeasureFragment;
 import com.g5team.healthtracking.R;
 
 /**
@@ -43,7 +43,7 @@ public class CircleProgressBar extends View {
      * Start the progress at 12 o'clock
      */
     private int startAngle = -90;
-    private int color = Color.GREEN;
+    private int color = Color.RED;
     private RectF rectF;
     private Paint backgroundPaint;
     private Paint foregroundPaint;
@@ -131,7 +131,7 @@ public class CircleProgressBar extends View {
         }
 
         backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        backgroundPaint.setColor(Color.WHITE);
+        backgroundPaint.setColor(Color.GRAY);
         backgroundPaint.setStyle(Paint.Style.STROKE);
         backgroundPaint.setStrokeWidth(strokeWidth);
 
@@ -154,9 +154,9 @@ public class CircleProgressBar extends View {
 
         if (canvas == null) throw new NullPointerException();
         Bitmap bitmap = null;
-        if (HomeFragment.getCurrent() == HomeFragment.TYPE.DARK) bitmap = darkBitmap;
+        if (MeasureFragment.getCurrent() == MeasureFragment.TYPE.DARK) bitmap = darkBitmap;
         else bitmap = redBitmap;
-
+        bitmap = Bitmap.createScaledBitmap(bitmap, 230, 230, false);
         int bitmapX = bitmap.getWidth() / 2;
         int bitmapY = bitmap.getHeight() / 2;
 
@@ -167,7 +167,9 @@ public class CircleProgressBar extends View {
         int centerY = parentY - bitmapY;
 
         matrix.reset();
+
         matrix.postTranslate(centerX, centerY);
+
         canvas.drawBitmap(bitmap, matrix, paint);
 
     }
@@ -225,7 +227,7 @@ public class CircleProgressBar extends View {
     }
     public void setProgressWithAnimation() {
         objectAnimator = ObjectAnimator.ofFloat(this, "progress", 0, 100);
-        objectAnimator.setDuration(9500);
+        objectAnimator.setDuration(20000);
         objectAnimator.setInterpolator(new DecelerateInterpolator());
         objectAnimator.start();
     }
