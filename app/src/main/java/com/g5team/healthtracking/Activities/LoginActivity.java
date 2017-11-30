@@ -31,13 +31,15 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
 
+    private static long back_pressed_time;
+    private static long PERIOD = 1000;
+    boolean status = false;
     private ProgressDialog progressDialog;
     private Button btnLogin;
     private TextInputLayout inputEmail, inputPassword;
     private EditText etEmail, etPassword;
     private TextView tvLinkToRegister;
     private String email, password;
-    boolean status = false;
     private SessionManager session;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,6 +234,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "checkActive onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
+                hideDialog();
+
+                Toast.makeText(LoginActivity.this, "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         }){
 
@@ -294,5 +299,14 @@ public class LoginActivity extends AppCompatActivity {
         }
         else etPassword.setError(null);
         return valid;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (back_pressed_time + PERIOD > System.currentTimeMillis()) {
+            System.exit(0);
+        } else
+            Toast.makeText(getBaseContext(), "Nhấn trở lại lần nữa để thoát!", Toast.LENGTH_SHORT).show();
+        back_pressed_time = System.currentTimeMillis();
     }
 }

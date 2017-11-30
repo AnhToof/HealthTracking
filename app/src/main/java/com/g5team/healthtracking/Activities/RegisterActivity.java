@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -36,6 +37,9 @@ import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
 
+    private static long back_pressed_time;
+    private static long PERIOD = 1000;
+
     private EditText etUsername, etPassword, etPassword2, etDob, etFullname;
     private RadioGroup rdg;
     private RadioButton rdMale, rdFemale;
@@ -44,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private ProgressDialog progressDialog;
     private SessionManager session;
-    String email, password, fullname, dob, sex;
+    private String email, password, fullname, dob, sex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.e(TAG, "SignUp onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
+                Toast.makeText(RegisterActivity.this, "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         }){
 
@@ -248,5 +253,12 @@ public class RegisterActivity extends AppCompatActivity {
         return valid;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if (back_pressed_time + PERIOD > System.currentTimeMillis()) {
+            System.exit(0);
+        } else
+            Toast.makeText(getBaseContext(), "Nhấn trở lại lần nữa để thoát!", Toast.LENGTH_SHORT).show();
+        back_pressed_time = System.currentTimeMillis();
+    }
 }

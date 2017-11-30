@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -38,6 +39,9 @@ import com.g5team.healthtracking.Utils.AppController;
 import com.g5team.healthtracking.Utils.ImageProcessing;
 import com.g5team.healthtracking.Utils.SessionManager;
 import com.g5team.healthtracking.Views.CircleProgressBar;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,61 +59,50 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
     private static final String TAG = "MeasureFragment";
 
     private static final AtomicBoolean processing = new AtomicBoolean(false);
+    private static final int averageArraySize = 4;
+    private static final int[] averageArray = new int[averageArraySize];
+    private static final int beatsArraySize = 3;
+    private static final int[] beatsArray = new int[beatsArraySize];
     private static SurfaceView preview = null;
     private static SurfaceHolder previewHolder = null;
     private static Camera camera = null;
     private static View image = null;
     private static PowerManager.WakeLock wakeLock = null;
     private static int averageIndex = 0;
-    private static final int averageArraySize = 4;
-    private static final int[] averageArray = new int[averageArraySize];
     private static int beatsIndex = 0;
-    private static final int beatsArraySize = 3;
-    private static final int[] beatsArray = new int[beatsArraySize];
     private static double beats = 0;
     private static long startTime = 0;
     private static int beatsAvg = 0;
-
-    private String hrDiagnose, hrNutrition, bpDiagnose, bpNutrition;
-    private int systolicPressure, diastolicPressure;
-    private boolean finish = false;
-
-
-    private Button btnDiagnose;
     private static TextView tvResultHR = null;
     private static TextView tvResultBP = null;
     private static EditText etWeigth;
     private static EditText etHeigth;
+    private static TYPE currentType = TYPE.DARK;
+    private String hrDiagnose, hrNutrition, bpDiagnose, bpNutrition;
+    private int systolicPressure, diastolicPressure;
+    private boolean finish = false;
+    private Button btnDiagnose;
     private FloatingActionButton fab, fabGuide;
     private SessionManager session;
     private ConstraintLayout constraintLayout;
     private ProgressDialog progressDialog;
     private CircleProgressBar circleProgressBar;
-
-    public static enum TYPE {
-        DARK, RED
-    };
-    private static TYPE currentType = TYPE.DARK;
-    public static TYPE getCurrent() {
-        return currentType;
-    }
-
-
-
-
-
+    ;
+    private TapTargetSequence targetSequence;
     public MeasureFragment() {
         // Required empty public constructor
 
     }
 
+    public static TYPE getCurrent() {
+        return currentType;
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_measure, container, false);
-
 
         tvResultHR = view.findViewById(R.id.tv_result_hr);
         tvResultBP = view.findViewById(R.id.tv_result_bp);
@@ -134,11 +127,13 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
         PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
 
+
         //event for get guide use app
         fabGuide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setGuide();
+                setGuide(v.getRootView());
+                targetSequence.start();
             }
         });
 
@@ -239,16 +234,16 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
                         if (finish == false){
                             preview.setVisibility(View.VISIBLE);
                             constraintLayout.setVisibility(View.GONE);
-                            new CountDownTimer(500, 1000) {
-                                public void onTick(long millisUntilFinished) {
-                                }
-                                public void onFinish() {
-                                    doInProcess();
-                                }
-                            }.start();
+
 
                         }else {
-                            Toast.makeText(getContext(), "Vui lòng chờ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "new CountDownTimer(500, 1000) {\n" +
+                                    "                                public void onTick(long millisUntilFinished) {\n" +
+                                    "                                }\n" +
+                                    "                                public void onFinish() {\n" +
+                                    "                                    doInProcess();\n" +
+                                    "                                }\n" +
+                                    "                            }.start();Vui lòng chờ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -259,9 +254,183 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
     }
 
     //guide use app
-    private void setGuide(){
+    private void setGuide(final View view) {
+        targetSequence = new TapTargetSequence(getActivity())
+                .targets(
+                        TapTarget.forView(view.findViewById(R.id.floatingActionButton), "Nhập chỉ số cơ thể", "Để chúng tôi có thể đo chính xác, bạn phải nhập chính xác chiều cao và cân nặng")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleColor(R.color.orange)
+                                .targetCircleColorInt(Color.RED)
+                                .outerCircleAlpha(0.96f)
+                                .descriptionTextColor(R.color.white)
+                                .transparentTarget(true)
+                                .targetRadius(40),
+                        TapTarget.forView(view.findViewById(R.id.customProgressBar), "Đo", "Đặt nhẹ ngón tay vào máy ảnh phía sau. Đảm bảo máy ảnh bị che phủ và một phần đèn flash bị che phủ. Không di chuyển ngón tay của bạn cho đến khi phép đo hoàn thành")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleAlpha(0.96f)
+                                .outerCircleColor(R.color.red)
+                                .descriptionTextColor(R.color.white)
+                                .transparentTarget(true)
+                                .targetRadius(90),
+                        TapTarget.forView(view.findViewById(R.id.tab_layout), "Chuyển trang", "Trượt để chuyển qua lại giữa trang Đo và trang Biểu Đồ")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleAlpha(0.96f)
+                                .titleTextColor(R.color.red)
+                                .descriptionTextColor(R.color.black)
+                                .transparentTarget(true)
+                                .targetRadius(100),
+                        TapTarget.forView(view.findViewById(R.id.btn_floating), "Hướng dẫn", "Khi bạn muốn xem lại hướng dẫn")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleAlpha(0.96f)
+                                .titleTextColor(R.color.orange)
+                                .descriptionTextColor(R.color.black)
+                                .transparentTarget(true)
+                                .targetRadius(40)
+
+                )
+                .listener(new TapTargetSequence.Listener() {
+                    // This listener will tell us when interesting(tm) events happen in regards
+                    // to the sequence
+                    @Override
+                    public void onSequenceFinish() {
+                        // Yay
+                        setShowCasePreview(view);
+
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                        // Boo
+                    }
+                });
+
+    }
+
+    private void setShowCasePreview(final View view) {
+        preview.setVisibility(View.VISIBLE);
+        TapTargetView.showFor(getActivity(),
+                TapTarget.forView(view.findViewById(R.id.preview), "Màn hình", "Nơi ghi nhận hình ảnh ngón tay")
+                        .outerCircleAlpha(0.96f)
+                        .drawShadow(true)
+                        .titleTextSize(30)
+                        .cancelable(false)
+                        .targetRadius(150)
+                        .transparentTarget(true),
+                new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetClick(TapTargetView v) {
+                        super.onTargetClick(v);      // This call is optional
+                        preview.setVisibility(View.GONE);
+                        setShowCaseDiagnose(view);
+
+                    }
+                }
+        );
+    }
+
+    private void setShowCaseDiagnose(final View view) {
+        constraintLayout.setVisibility(View.VISIBLE);
+        TapTargetSequence tapTargetSequence = new TapTargetSequence(getActivity())
+                .targets(
+                        TapTarget.forView(view.findViewById(R.id.tv_result_hr), "Nhịp tim", "Kết quả về chỉ số nhịp tim sẽ hiện thị ở đây")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleColor(R.color.orange)
+                                .targetCircleColorInt(Color.RED)
+                                .outerCircleAlpha(0.96f)
+                                .descriptionTextColor(R.color.white)
+                                .transparentTarget(true)
+                                .targetRadius(50),
+                        TapTarget.forView(view.findViewById(R.id.tv_result_bp), "Huyết áp", "Kết quả về chỉ số nhịp tim sẽ hiện thị ở đây")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleAlpha(0.96f)
+                                .outerCircleColor(R.color.red)
+                                .descriptionTextColor(R.color.white)
+                                .transparentTarget(true)
+                                .targetRadius(55),
+                        TapTarget.forView(view.findViewById(R.id.btn_diagnose), "Chẩn đoán", "Dùng để lấy chẩn đoán từ kết quả đo của bạn")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .titleTextSize(30)
+                                .outerCircleAlpha(0.96f)
+                                .titleTextColor(R.color.red)
+                                .descriptionTextColor(R.color.black)
+                                .transparentTarget(true)
+                                .targetRadius(60)
+
+                )
+                .listener(new TapTargetSequence.Listener() {
+                    // This listener will tell us when interesting(tm) events happen in regards
+                    // to the sequence
+                    @Override
+                    public void onSequenceFinish() {
+                        // Yay
+                        constraintLayout.setVisibility(View.GONE);
+                        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                                .setTitle("Chúc mừng")
+                                .setMessage("Bạn đã hoàn thành hướng dẫn")
+                                .setPositiveButton("OK", null).show();
+
+                        new CountDownTimer(1000, 1000) {
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            public void onFinish() {
+                                TapTargetView.showFor(dialog,
+                                        TapTarget.forView(dialog.getButton(DialogInterface.BUTTON_POSITIVE), "OK", "Nhấn vào đây để hoàn tất hướng dẫn")
+                                                .transparentTarget(true)
+                                                .outerCircleAlpha(0.5f)
+                                                .drawShadow(true)
+                                                .cancelable(false)
+                                                .tintTarget(true)
+                                                .outerCircleColor(R.color.orange)
+                                                .targetCircleColorInt(Color.RED)
+                                                .descriptionTextColor(R.color.white)
+                                                .titleTextSize(30), new TapTargetView.Listener() {
+                                            @Override
+                                            public void onTargetClick(TapTargetView view) {
+                                                super.onTargetClick(view);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                            }
+                        }.start();
 
 
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                        // Boo
+                    }
+                });
+        tapTargetSequence.start();
     }
 
     //set blood pressure value based on heart rate value
@@ -416,12 +585,14 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
         }.start();
 
     }
+
     private void showDialog(String message){
         progressDialog.setIndeterminate(false);
         progressDialog.setMessage(message);
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
+
     private void hideDialog(){
         progressDialog.dismiss();
     }
@@ -647,6 +818,10 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
 
+    }
+
+    public static enum TYPE {
+        DARK, RED
     }
 
 

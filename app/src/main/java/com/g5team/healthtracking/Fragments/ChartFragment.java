@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -89,6 +90,12 @@ public class ChartFragment extends Fragment {
         });
         progressDialog = new ProgressDialog(getContext(),
                 R.style.Theme_AppCompat_DayNight_Dialog_Alert);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllResults();
+            }
+        });
 
         getAllResults();
 
@@ -154,6 +161,8 @@ public class ChartFragment extends Fragment {
 
                         }catch (JSONException e){
                             Log.e(TAG, "getAllResults error" +  e.getMessage());
+                            swipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(getContext(), "Thử đăng xuất rồi đăng nhập lại!", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -165,6 +174,7 @@ public class ChartFragment extends Fragment {
                 Log.e(TAG, "getAllResults onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
+                Toast.makeText(getContext(), "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
             }
         }){

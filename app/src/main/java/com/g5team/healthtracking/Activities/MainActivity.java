@@ -27,13 +27,20 @@ import com.g5team.healthtracking.R;
 import com.g5team.healthtracking.Utils.AppConfig;
 import com.g5team.healthtracking.Utils.AppController;
 import com.g5team.healthtracking.Utils.SessionManager;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG_HOME = "HOME";
+    private static final String TAG_PROFILE = "PROFILE";
     public static String TAG = "MainActivity";
+    public static String CURRENT_TAG;
+    public static TapTargetSequence targetSequence;
+    private static long back_pressed_time;
+    private static long PERIOD = 1000;
     private SessionManager session;
     private SectionsPagerAdapter sectionsPagerAdapter;
     private TextView tvFullName, tvEmail;
@@ -64,8 +71,9 @@ public class MainActivity extends AppCompatActivity
         tvEmail.setText(AppConfig.EMAIL);
         tvFullName.setText(AppConfig.FULLNAME);
 
+
     }
-    private Boolean exit = false;
+
     @Override
     public void onBackPressed() {
 
@@ -74,28 +82,79 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return;
         }
-        super.onBackPressed();
+
+
+        if (CURRENT_TAG == TAG_HOME) {
+            if (HomeFragment.mViewPager.getCurrentItem() == 0) {
+                if (back_pressed_time + PERIOD > System.currentTimeMillis()) {
+                    System.exit(0);
+                } else
+                    Toast.makeText(MainActivity.this, "Nhấn trở lại lần nữa để thoát!", Toast.LENGTH_SHORT).show();
+                back_pressed_time = System.currentTimeMillis();
+            } else {
+                HomeFragment.mViewPager.setCurrentItem(0, false);
+            }
+
+        } else {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new HomeFragment(), TAG_HOME);
+            ft.commit();
+        }
+
     }
 
+    public void guide() {
+        targetSequence = new TapTargetSequence(MainActivity.this)
+                .targets(
+                        TapTarget.forView(findViewById(R.id.btn_floating), "Nhập chỉ số cơ thể", "Để chúng tôi có thể đo chính xác, bạn phải nhập chính xác chiều cao và cân nặng")
+                                .drawShadow(true)
+                                .cancelable(false)
+                                .tintTarget(true)
+                                .transparentTarget(true)
+                                .targetRadius(60))
+                .listener(new TapTargetSequence.Listener() {
+                    // This listener will tell us when interesting(tm) events happen in regards
+                    // to the sequence
+                    @Override
+                    public void onSequenceFinish() {
+                        // Yay
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                        // Boo
+                    }
+                });
+    }
     private void displaySelectedScreen(int id){
+
         Fragment fragment = null;
+        CURRENT_TAG = null;
         switch (id){
             case R.id.nav_home:
                 fragment = new HomeFragment();
+                CURRENT_TAG = TAG_HOME;
                 break;
             case R.id.nav_profile:
                 fragment = new ProfileFragment();
+                CURRENT_TAG = TAG_PROFILE;
                 break;
             case R.id.nav_exit:
                 logout();
                 break;
             default:
                 fragment = new HomeFragment();
+                CURRENT_TAG = TAG_HOME;
                 break;
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
+            ft.replace(R.id.content_frame, fragment, CURRENT_TAG);
             ft.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -107,7 +166,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         displaySelectedScreen(id);
         return true;
     }
@@ -120,7 +178,7 @@ public class MainActivity extends AppCompatActivity
                     public void onResponse(String response) {
                         Log.e(TAG, "LOGOUT onResponse: " + response.toString());
                         session.setLogin(false);
-                        Toast.makeText(getBaseContext(), "Bạn đã đăng xuất thành công", Toast.LENGTH_SHORT);
+                        Toast.makeText(MainActivity.this, "Bạn đã đăng xuất thành công", Toast.LENGTH_SHORT);
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();
@@ -146,5 +204,6 @@ public class MainActivity extends AppCompatActivity
         };
         AppController.getInstance(getBaseContext()).addToRequestQueue(stringRequest);
     }
+
 
 }

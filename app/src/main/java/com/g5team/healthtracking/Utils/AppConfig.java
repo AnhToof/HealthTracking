@@ -28,7 +28,7 @@ public class AppConfig {
     public static int HEIGHT = 0;
     public static int WEIGTH = 0;
 
-    public static boolean FIRST = true;
+    public static boolean FIRST;
 
 
 

@@ -8,12 +8,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.g5team.healthtracking.R;
 
 public class SplashActivity extends AppCompatActivity{
     private static final String TAG = "SplashActivity";
-
+    private static long back_pressed_time;
+    private static long PERIOD = 1000;
     private Button btnLogin, btnRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,5 +49,14 @@ public class SplashActivity extends AppCompatActivity{
                         PackageManager.PERMISSION_DENIED) {
             requestPermissions(permissionsRequired, 0);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (back_pressed_time + PERIOD > System.currentTimeMillis()) {
+            System.exit(0);
+        } else
+            Toast.makeText(getBaseContext(), "Nhấn trở lại lần nữa để thoát!", Toast.LENGTH_SHORT).show();
+        back_pressed_time = System.currentTimeMillis();
     }
 }

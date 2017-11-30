@@ -17,4 +17,7 @@
     <color name="colorArcBG">#9C27B0</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="blue">#673AB7</color>
+    <color name="trans">#feffffff</color>
+    <color name="orange">#FF6D00</color>
+    <color name="red">#F44336</color>
 </resources>

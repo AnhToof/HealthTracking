@@ -20,6 +20,10 @@ import com.g5team.healthtracking.R;
 public class HomeFragment extends Fragment {
 
     /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    public static ViewPager mViewPager;
+    /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
@@ -28,11 +32,6 @@ public class HomeFragment extends Fragment {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
     private TabLayout tabLayout;
     public HomeFragment() {
 
@@ -77,6 +76,7 @@ public class HomeFragment extends Fragment {
 
         return rootView;
     }
+
 
 }
 

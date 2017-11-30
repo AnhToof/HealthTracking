@@ -9,36 +9,28 @@ import android.util.Log;
  */
 
 public class SessionManager {
-    // LogCat tag
-    private static String TAG = SessionManager.class.getSimpleName();
-
-    // Shared Preferences
-    SharedPreferences pref;
-
-    SharedPreferences.Editor editor;
-    Context _context;
-
-    // Shared pref mode
-    int PRIVATE_MODE = 0;
-
     // Shared preferences file name
     private static final String PREF_NAME = "Login";
-
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
-
+    // LogCat tag
+    private static String TAG = SessionManager.class.getSimpleName();
     private static String TOKEN_TYPE = "TOKEN_TYPE";
     private static String ACCESS_TOKEN = "ACCESS_TOKEN";
     private static String REFRESH_TOKEN = "REFRESH_TOKEN";
     private static String EMAIL = "EMAIL";
     private static String FULLNAME = "FULLNAME";
-
     private static String FIRST = "FIRST";
     private static String HEIGHT = "HEIGHT";
     private static String WEIGHT = "WEIGHT";
-
     private static String DOB = "DOB";
     private static String AGE = "AGE";
     private static String SEX = "SEX";
+    // Shared Preferences
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    Context _context;
+    // Shared pref mode
+    int PRIVATE_MODE = 0;
 
     public SessionManager(Context context) {
         this._context = context;
@@ -86,7 +78,7 @@ public class SessionManager {
 
     }
     public boolean getFirst(){
-        return pref.getBoolean(FIRST, false);
+        return pref.getBoolean(FIRST, true);
     }
     public int getHeight(){
         return pref.getInt(HEIGHT, 0);
