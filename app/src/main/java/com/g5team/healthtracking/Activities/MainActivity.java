@@ -27,7 +27,6 @@ import com.g5team.healthtracking.R;
 import com.g5team.healthtracking.Utils.AppConfig;
 import com.g5team.healthtracking.Utils.AppController;
 import com.g5team.healthtracking.Utils.SessionManager;
-import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import java.util.HashMap;
@@ -59,11 +58,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView =  (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
 
         displaySelectedScreen(R.id.nav_home);
         navigationView.setCheckedItem(R.id.nav_home);
+
 
         View header = navigationView.getHeaderView(0);
         tvFullName = header.findViewById(R.id.tv_fullname_main);
@@ -103,34 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void guide() {
-        targetSequence = new TapTargetSequence(MainActivity.this)
-                .targets(
-                        TapTarget.forView(findViewById(R.id.btn_floating), "Nhập chỉ số cơ thể", "Để chúng tôi có thể đo chính xác, bạn phải nhập chính xác chiều cao và cân nặng")
-                                .drawShadow(true)
-                                .cancelable(false)
-                                .tintTarget(true)
-                                .transparentTarget(true)
-                                .targetRadius(60))
-                .listener(new TapTargetSequence.Listener() {
-                    // This listener will tell us when interesting(tm) events happen in regards
-                    // to the sequence
-                    @Override
-                    public void onSequenceFinish() {
-                        // Yay
-                    }
-
-                    @Override
-                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
-                    }
-
-                    @Override
-                    public void onSequenceCanceled(TapTarget lastTarget) {
-                        // Boo
-                    }
-                });
-    }
     private void displaySelectedScreen(int id){
 
         Fragment fragment = null;
@@ -178,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onResponse(String response) {
                         Log.e(TAG, "LOGOUT onResponse: " + response.toString());
                         session.setLogin(false);
-                        Toast.makeText(MainActivity.this, "Bạn đã đăng xuất thành công", Toast.LENGTH_SHORT);
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();
@@ -190,7 +163,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "LOGOUT onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
-                Toast.makeText(getBaseContext(), "Đăng xuất thất bại", Toast.LENGTH_SHORT);
+                session.setLogin(false);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         }) {
 

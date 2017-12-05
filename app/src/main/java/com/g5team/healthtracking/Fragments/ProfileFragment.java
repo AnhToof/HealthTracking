@@ -31,7 +31,10 @@ import com.g5team.healthtracking.Utils.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,6 +98,8 @@ public class ProfileFragment extends Fragment {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!validateFullname())
+                    return;
                 email = etEmail.getText().toString();
                 fullname = etFullname.getText().toString();
                 dob = etDob.getText().toString();
@@ -109,27 +114,35 @@ public class ProfileFragment extends Fragment {
                 etCurrentPassword = mView.findViewById(R.id.et_current_password);
                 etNewPassword = mView.findViewById(R.id.et_new_password);
                 etNewPasswordConfirmation = mView.findViewById(R.id.et_new_password_confirmation);
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setTitle("Nhập các chỉ số");
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyAlertDialogStyle);
+                builder.setTitle("Đổi mật khẩu");
                 builder.setView(mView);
+                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (validateChangePassword() == false)
-                            return;
-                        currentPassword = etCurrentPassword.getText().toString();
-                        changePassword();
 
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
+                    public void onClick(View v) {
+                        if (validateChangePassword()==true){
+                            currentPassword = etCurrentPassword.getText().toString();
+                            changePassword();
+                            dialog.dismiss();
+                        }
+
                     }
                 });
-                AlertDialog dialog = builder.create();
-                dialog.show();
 
             }
         });
@@ -137,12 +150,26 @@ public class ProfileFragment extends Fragment {
         fbtnDob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                final Calendar calendar = Calendar.getInstance();
+
+                final DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), R.style.MyDatePickerDialogTheme, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        etDob.setText(year + "-" + ((month + 1)<10?"0"+(month + 1):(month + 1))
-                                + "-" + (dayOfMonth<10?"0"+dayOfMonth:dayOfMonth));
+                        String picked = year + "-" + ((month + 1)<10?"0"+(month + 1):(month + 1))
+                                + "-" + (dayOfMonth<10?"0"+dayOfMonth:dayOfMonth);
+                        Date dateSource = null;
+                        Date sysDate = calendar.getTime();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            dateSource = sdf.parse(picked);
+                            if (dateSource.compareTo(sysDate) > 0)
+                                Toast.makeText(getContext(), "Ngày sinh không được vượt quá ngày hiện tại", Toast.LENGTH_SHORT).show();
+                            else
+                                etDob.setText(picked);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, calendar.get(calendar.YEAR), calendar.get(calendar.MONTH), calendar.get(calendar.DAY_OF_MONTH));
                 datePickerDialog.show();
@@ -150,6 +177,15 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+    private boolean validateFullname(){
+        boolean valid = true;
+        fullname = etFullname.getText().toString();
+        if (fullname.isEmpty()){
+            etFullname.setError("Tên không được để trống");
+            valid = false;
+        }else etFullname.setError(null);
+        return valid;
     }
     private boolean validateChangePassword(){
         boolean valid = true;
@@ -177,7 +213,7 @@ public class ProfileFragment extends Fragment {
         progressDialog.dismiss();
     }
     private void update() {
-        showDialog("Updating...");
+        showDialog("Đang cập nhật");
         final StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 AppConfig.URL_EDIT,
                 new Response.Listener<String>() {
@@ -217,6 +253,8 @@ public class ProfileFragment extends Fragment {
                 Log.e(TAG, "UPDATE onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
+
+                Toast.makeText(getContext(), "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         }){
 
@@ -242,7 +280,7 @@ public class ProfileFragment extends Fragment {
         AppController.getInstance(getContext()).addToRequestQueue(stringRequest);
     }
     private void changePassword(){
-        showDialog("Updating...");
+        showDialog("Đang xác thực");
         final StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 AppConfig.URL_CHANGE_PASS,
                 new Response.Listener<String>() {
@@ -254,8 +292,9 @@ public class ProfileFragment extends Fragment {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.has("error")){
-                                etCurrentPassword.setError("Mật khẩu hiện tại không đúng");
+                                etCurrentPassword.setError("Sai Mật khẩu hiện tại");
                             }else {
+                                etCurrentPassword.setError(null);
                                 Toast.makeText(getContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
                             }
 
@@ -272,6 +311,10 @@ public class ProfileFragment extends Fragment {
                 Log.e(TAG, "UPDATE PASSWORD onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
+                if (error.networkResponse.statusCode == 400) {
+                    Toast.makeText(getContext(), "Sai mật khẩu hiện tại", Toast.LENGTH_SHORT).show();
+                }else
+                    Toast.makeText(getContext(), "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         }){
 

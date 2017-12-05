@@ -13,7 +13,7 @@
     <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
+    android:layout_margin="10dp"
     android:orientation="vertical">
 
     <TextView
@@ -116,10 +116,10 @@
                 android:id="@+id/et_dob_reg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
+                android:editable="false"
                 android:enabled="false"
                 android:hint="Ngày Sinh"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.FloatingActionButton

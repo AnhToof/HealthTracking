@@ -30,7 +30,10 @@ import com.g5team.healthtracking.Utils.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,12 +71,25 @@ public class RegisterActivity extends AppCompatActivity {
         fbtnDob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                DatePickerDialog datePickerDialog = new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
+                final Calendar calendar = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(RegisterActivity.this, R.style.MyDatePickerDialogTheme, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        etDob.setText(year + "-" + ((month + 1)<10?"0"+(month + 1):(month + 1))
-                                + "-" + (dayOfMonth<10?"0"+dayOfMonth:dayOfMonth));
+                        String picked = year + "-" + ((month + 1)<10?"0"+(month + 1):(month + 1))
+                                + "-" + (dayOfMonth<10?"0"+dayOfMonth:dayOfMonth);
+                        Date dateSource = null;
+                        Date sysDate = calendar.getTime();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            dateSource = sdf.parse(picked);
+                            if (dateSource.compareTo(sysDate) > 0)
+                                Toast.makeText(RegisterActivity.this, "Ngày sinh không được vượt quá ngày hiện tại", Toast.LENGTH_SHORT).show();
+                            else
+                                etDob.setText(picked);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, calendar.get(calendar.YEAR), calendar.get(calendar.MONTH), calendar.get(calendar.DAY_OF_MONTH));
                 datePickerDialog.show();
@@ -89,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
     private void showDialog(){
         progressDialog.setIndeterminate(false);
-        progressDialog.setMessage("Đang đăng ký...");
+        progressDialog.setMessage("Đang đăng ký");
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
@@ -100,11 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!validate()){
             return;
         }
-        Log.e("CHECK", email+ " " +
-                password + " " +
-                fullname + " " +
-                dob + " " +
-                sex );
+
         checkSignUp();
 
     }
@@ -123,7 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.has("token_type")){
                                 session.setLogin(false);
-                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this, R.style.MyAlertDialogStyle);
                                 builder.setTitle("Thông báo");
                                 builder.setMessage("Thông tin tài khoản của bạn đã được gửi đến ban quản trị. " +
                                         "Vui lòng quay lại khi tài khoản được cấp phép");
@@ -138,7 +150,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 alertDialog.show();
 
                             }else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this, R.style.MyAlertDialogStyle);
                                 builder.setTitle("Thông báo");
                                 builder.setMessage("Tài khoản đã tồn tại");
                                 builder.setPositiveButton("Đăng nhập", new DialogInterface.OnClickListener() {
@@ -155,6 +167,20 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         }catch (JSONException e){
                             Log.e(TAG, "SignUp error: " + e.getMessage());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this, R.style.MyAlertDialogStyle);
+                            builder.setTitle("Thông báo");
+                            builder.setMessage("Tài khoản đã tồn tại");
+                            builder.setPositiveButton("Đăng nhập", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            });
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
                         }
 
                     }
@@ -176,7 +202,7 @@ public class RegisterActivity extends AppCompatActivity {
                 headers.put("Content-Type", "application/x-www-form-urlencoded");
                 return headers;
             }
-            @Override
+
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
@@ -195,21 +221,21 @@ public class RegisterActivity extends AppCompatActivity {
     }
     private void initialize() {
 
-        etUsername = (EditText)findViewById(R.id.et_username_reg);
-        etPassword = (EditText)findViewById(R.id.et_password_reg);
-        etPassword2 = (EditText)findViewById(R.id.et_password2_reg);
-        etFullname = (EditText)findViewById(R.id.et_fullname_reg);
-        etDob = (EditText)findViewById(R.id.et_dob_reg);
+        etUsername = (EditText) findViewById(R.id.et_username_reg);
+        etPassword = (EditText) findViewById(R.id.et_password_reg);
+        etPassword2 = (EditText) findViewById(R.id.et_password2_reg);
+        etFullname = (EditText) findViewById(R.id.et_fullname_reg);
+        etDob = (EditText) findViewById(R.id.et_dob_reg);
 
-        fbtnDob = (FloatingActionButton)findViewById(R.id.fbtn_dob);
+        fbtnDob = (FloatingActionButton) findViewById(R.id.fbtn_dob);
 
-        rdg = (RadioGroup)findViewById(R.id.rdg);
-        rdMale = (RadioButton)findViewById(R.id.rd_male);
-        rdFemale = (RadioButton)findViewById(R.id.rd_female);
+        rdg = (RadioGroup) findViewById(R.id.rdg);
+        rdMale = (RadioButton) findViewById(R.id.rd_male);
+        rdFemale = (RadioButton) findViewById(R.id.rd_female);
 
-        tvLinkToLogin = (TextView)findViewById(R.id.tv_link_to_login);
+        tvLinkToLogin = (TextView) findViewById(R.id.tv_link_to_login);
 
-        btnRegister = (Button)findViewById(R.id.btn_register);
+        btnRegister = (Button) findViewById(R.id.btn_register);
         progressDialog = new ProgressDialog(RegisterActivity.this,
                 R.style.Theme_AppCompat_DayNight_Dialog_Alert);
 
@@ -224,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
         fullname = etFullname.getText().toString();
         dob = etDob.getText().toString();
         sex = rdMale.isChecked()? "1":"0";
-        if (email.isEmpty() || email.contains(" ")){
+        if (isValidEmail(email) == false){
             etUsername.setError("Email không hợp lệ");
             valid = false;
         }else etUsername.setError(null);
@@ -233,24 +259,35 @@ public class RegisterActivity extends AppCompatActivity {
             valid = false;
         }else etPassword.setError(null);
         if (!password2.equals(password)){
-            etPassword2.setError("Mẩu khẩu không khớp");
+            etPassword2.setError("Mẩu khẩu xác nhận không khớp");
             valid = false;
         }else etPassword2.setError(null);
         if (fullname.isEmpty()){
-            etFullname.setError("Vui lòng nhập Họ v Tên hợp lệ");
+            etFullname.setError("Vui lòng nhập Họ và Tên hợp lệ");
             valid = false;
         }else etFullname.setError(null);
         if (dob.isEmpty()){
             etDob.setError("Vui lòng chọn Ngày Sinh");
+            etDob.setFocusableInTouchMode(true);
             valid = false;
-        }else etDob.setError(null);
+        }else{
+            etDob.setError(null);
+        }
         if (rdg.getCheckedRadioButtonId()==-1){
-            rdMale.setError("Vui lòng chọn giới tính");
+            rdFemale.setError("Vui lòng chọn giới tính");
+
+            rdMale.setFocusableInTouchMode(true);
             valid = false;
         }else {
-            rdMale.setError(null);
+            rdFemale.setError(null);
+            rdMale.setFocusableInTouchMode(false);
         }
         return valid;
+    }
+    private boolean isValidEmail(String email){
+        if (email.isEmpty() || email.contains(" "))
+            return false;
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     @Override

@@ -78,7 +78,7 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
     private static EditText etWeigth;
     private static EditText etHeigth;
     private static TYPE currentType = TYPE.DARK;
-    private String hrDiagnose, hrNutrition, bpDiagnose, bpNutrition;
+    private String hrDiagnose, hrNutrition, bpDiagnose, bpNutrition, weight, height;
     private int systolicPressure, diastolicPressure;
     private boolean finish = false;
     private Button btnDiagnose;
@@ -87,7 +87,6 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
     private ConstraintLayout constraintLayout;
     private ProgressDialog progressDialog;
     private CircleProgressBar circleProgressBar;
-    ;
     private TapTargetSequence targetSequence;
     public MeasureFragment() {
         // Required empty public constructor
@@ -119,14 +118,12 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
         circleProgressBar = view.findViewById(R.id.customProgressBar);
 
 
-
         preview = view.findViewById(R.id.preview);
         previewHolder = preview.getHolder();
         previewHolder.addCallback(this);
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
-
 
         //event for get guide use app
         fabGuide.setOnClickListener(new View.OnClickListener() {
@@ -153,32 +150,38 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
                 final View mView = inflater.inflate(R.layout.custom_dialog_wh, null);
                 etHeigth = mView.findViewById(R.id.et_height);
                 etWeigth = mView.findViewById(R.id.et_weigth);
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyAlertDialogStyle);
                 builder.setTitle("Nhập các chỉ số");
                 builder.setView(mView);
+                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String weigth = etWeigth.getText().toString();
-                        String heigth = etHeigth.getText().toString();
-                        if (weigth.isEmpty() || heigth.isEmpty()){
-                            Toast.makeText(getActivity(), "Vui Lòng Nhập đầy đủ chiều cao và cân nặng", Toast.LENGTH_SHORT);
-                        }
-                        else {
-                            AppConfig.WEIGTH = Integer.parseInt(weigth);
-                            AppConfig.HEIGHT = Integer.parseInt(heigth);
-                            session.setWH();
-                        }
+
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                AlertDialog dialog = builder.create();
+
+                final AlertDialog dialog = builder.create();
                 dialog.show();
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (validateHW() == true){
+                            AppConfig.WEIGTH = Integer.parseInt(weight);
+                            AppConfig.HEIGHT = Integer.parseInt(height);
+                            session.setWH();
+                            dialog.dismiss();
+
+                        }
+                    }
+                });
 
             }
         });
@@ -201,32 +204,36 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
                         final View mView = inflater.inflate(R.layout.custom_dialog_wh, null);
                         etHeigth = mView.findViewById(R.id.et_height);
                         etWeigth = mView.findViewById(R.id.et_weigth);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(), R.style.MyAlertDialogStyle);
                         builder.setTitle("Nhập các chỉ số");
                         builder.setView(mView);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String weigth = etWeigth.getText().toString();
-                                String heigth = etHeigth.getText().toString();
-                                if (weigth.isEmpty() || heigth.isEmpty()){
-                                    Toast.makeText(getActivity(), "Vui Lòng Nhập đầy đủ chiều cao và cân nặng", Toast.LENGTH_SHORT);
-                                }
-                                else {
-                                    AppConfig.WEIGTH = Integer.parseInt(weigth);
-                                    AppConfig.HEIGHT = Integer.parseInt(heigth);
-                                    session.setWH();
-                                }
+
                             }
                         });
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
+                                dialog.dismiss();
                             }
                         });
-                        AlertDialog dialog = builder.create();
+                        final AlertDialog dialog = builder.create();
                         dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (validateHW() == true){
+                                    AppConfig.WEIGTH = Integer.parseInt(weight);
+                                    AppConfig.HEIGHT = Integer.parseInt(height);
+                                    session.setWH();
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        });
 
                         Toast.makeText(getContext(), "Vui lòng nhập chiều cao và cân nặng", Toast.LENGTH_SHORT).show();
                     }
@@ -235,15 +242,13 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
                             preview.setVisibility(View.VISIBLE);
                             constraintLayout.setVisibility(View.GONE);
 
-
-                        }else {
-                            Toast.makeText(getContext(), "new CountDownTimer(500, 1000) {\n" +
-                                    "                                public void onTick(long millisUntilFinished) {\n" +
-                                    "                                }\n" +
-                                    "                                public void onFinish() {\n" +
-                                    "                                    doInProcess();\n" +
-                                    "                                }\n" +
-                                    "                            }.start();Vui lòng chờ", Toast.LENGTH_SHORT).show();
+                            new CountDownTimer(500, 1000) {
+                               public void onTick(long millisUntilFinished) {
+                                }
+                                public void onFinish() {
+                                    doInProcess();
+                                }
+                           }.start();
                         }
                     }
                 }
@@ -251,6 +256,21 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
         });
 
         return view;
+    }
+    private boolean validateHW(){
+        boolean valid = true;
+        weight = etWeigth.getText().toString();
+        height = etHeigth.getText().toString();
+        if (weight.isEmpty()){
+            etWeigth.setError("Cân nặng không được để trống");
+            valid = false;
+        }else etWeigth.setError(null);
+        if (height.isEmpty()){
+            etHeigth.setError("Chiều cao không được để trống");
+            valid = false;
+        }else etHeigth.setError(null);
+
+        return valid;
     }
 
     //guide use app
@@ -415,6 +435,8 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
                                                 dialog.dismiss();
                                             }
                                         });
+                                if (tvResultBP.getText().toString() == "0")
+                                    constraintLayout.setVisibility(View.VISIBLE);
                             }
                         }.start();
 
@@ -443,7 +465,7 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
         double pulsePressure = Math.abs(strokeVolume / ((0.013 * AppConfig.WEIGTH - 0.007 * AppConfig.AGE - 0.004 * heartRate) + 1.307));
         double meanPulsePressure = Q * R;
 
-        systolicPressure = (int) (meanPulsePressure + ((2 * pulsePressure)/3));
+        systolicPressure = (int) (meanPulsePressure + (3 / 2 * pulsePressure));
         diastolicPressure = (int) (meanPulsePressure - (pulsePressure / 3));
         tvResultBP.setText(systolicPressure + "/" + diastolicPressure);
 
@@ -619,6 +641,7 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
                 Log.e(TAG, "SaveResult onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
+                Toast.makeText(getContext(), "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         }){
 

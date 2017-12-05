@@ -67,8 +67,6 @@ public class ChartFragment extends Fragment {
         listView = view.findViewById(R.id.listView1);
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         tv = view.findViewById(R.id.chart_notify);
-        listView.setVisibility(View.VISIBLE);
-        tv.setVisibility(View.GONE);
         swipeRefreshLayout.setEnabled(false);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             private boolean scrollEnabled;
@@ -105,7 +103,7 @@ public class ChartFragment extends Fragment {
 
     private void showDialog(){
         progressDialog.setIndeterminate(false);
-        progressDialog.setMessage("Đang lấy dữ liệu...");
+        progressDialog.setMessage("Đang lấy dữ liệu");
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
@@ -114,6 +112,8 @@ public class ChartFragment extends Fragment {
     }
     private void getAllResults(){
         showDialog();
+        listView.setVisibility(View.VISIBLE);
+        tv.setVisibility(View.GONE);
         final StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 AppConfig.URL_RESULT,
                 new Response.Listener<String>() {
@@ -156,13 +156,10 @@ public class ChartFragment extends Fragment {
                             }
 
 
-
-
-
                         }catch (JSONException e){
                             Log.e(TAG, "getAllResults error" +  e.getMessage());
                             swipeRefreshLayout.setRefreshing(false);
-                            Toast.makeText(getContext(), "Thử đăng xuất rồi đăng nhập lại!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -174,6 +171,8 @@ public class ChartFragment extends Fragment {
                 Log.e(TAG, "getAllResults onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
+                listView.setVisibility(View.GONE);
+                tv.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(), "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
             }

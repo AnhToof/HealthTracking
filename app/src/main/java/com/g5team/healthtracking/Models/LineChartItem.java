@@ -57,21 +57,22 @@ public class LineChartItem extends ChartItem {
         xAxis.setPosition(XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(true);
+        xAxis.setTextSize(12);
+
 
         YAxis leftAxis = holder.chart.getAxisLeft();
-        leftAxis.setLabelCount(7, false);
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setLabelCount(5, false);
+        leftAxis.setAxisMinimum(30f);
+        leftAxis.setTextSize(12);
 
         YAxis rightAxis = holder.chart.getAxisRight();
-        rightAxis.setLabelCount(7, false);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        rightAxis.setEnabled(false);
+
 
         // set data
         holder.chart.setData((LineData) mChartData);
         mChartData.setDrawValues(true);
         mChartData.setValueTextSize(10);
-
 
 
         // do not forget to refresh the chart

@@ -27,10 +27,10 @@ public class DiagnoseActivity extends AppCompatActivity {
         if (bundle != null){
             tvHeartRate.setText(String.valueOf(bundle.getInt("heartRate")));
             tvBloodPressure.setText(bundle.getInt("systolicPressure") + "/" + bundle.getInt("diastolicPressure"));
-            tvHRDiagnose.setText(bundle.getString("hrDiagnose") == null ? "Không có dữ liệu":bundle.getString("hrDiagnose"));
-            tvHRNutrition.setText(bundle.getString("hrNutrition") == null ? "Không có dữ liệu":bundle.getString("hrNutrition"));
-            tvBPDiagnose.setText(bundle.getString("bpDiagnose") == null ? "Không có dữ liệu":bundle.getString("bpDiagnose"));
-            tvBPNutrition.setText(bundle.getString("bpNutrition") == null ? "Không có dữ liệu":bundle.getString("bpNutrition"));
+            tvHRDiagnose.setText(bundle.getString("hrDiagnose") == "null" ? "Không có dữ liệu":bundle.getString("hrDiagnose"));
+            tvHRNutrition.setText(bundle.getString("hrNutrition") == "null" ? "Không có dữ liệu":bundle.getString("hrNutrition"));
+            tvBPDiagnose.setText(bundle.getString("bpDiagnose") == "null" ? "Không có dữ liệu":bundle.getString("bpDiagnose"));
+            tvBPNutrition.setText(bundle.getString("bpNutrition") == "null" ? "Không có dữ liệu":bundle.getString("bpNutrition"));
         }else {
             Log.e(TAG, "Lỗi bundle");
         }

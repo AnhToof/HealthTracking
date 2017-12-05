@@ -57,15 +57,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initialize() {
-        inputEmail = (TextInputLayout)findViewById(R.id.input_email);
-        inputPassword = (TextInputLayout)findViewById(R.id.input_password);
+        inputEmail = (TextInputLayout) findViewById(R.id.input_email);
+        inputPassword = (TextInputLayout) findViewById(R.id.input_password);
 
-        etEmail = (EditText)findViewById(R.id.et_username);
-        etPassword = (EditText)findViewById(R.id.et_password);
+        etEmail = (EditText) findViewById(R.id.et_username);
+        etPassword = (EditText) findViewById(R.id.et_password);
 
-        btnLogin = (Button)findViewById(R.id.btn_login);
+        btnLogin = (Button) findViewById(R.id.btn_login);
 
-        tvLinkToRegister = (TextView)findViewById(R.id.tv_link_to_register);
+        tvLinkToRegister = (TextView) findViewById(R.id.tv_link_to_register);
 
         progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.Theme_AppCompat_DayNight_Dialog_Alert);
@@ -86,9 +86,13 @@ public class LoginActivity extends AppCompatActivity {
             AppConfig.SEX = session.getSex();
             AppConfig.FIRST  = session.getFirst();
             // User is already logged in. Take him to main activity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            if (AppConfig.ACCESS_TOKEN.isEmpty()){
+                session.setLogin(false);
+            }else {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void showDialog(){
         progressDialog.setIndeterminate(false);
-        progressDialog.setMessage("Đang xác thực...");
+        progressDialog.setMessage("Đang xác thực");
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
@@ -123,8 +127,6 @@ public class LoginActivity extends AppCompatActivity {
         showDialog();
         //
 
-
-
         final StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 AppConfig.URL_LOGIN,
                 new Response.Listener<String>() {
@@ -134,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e(TAG, "LOGIN onResponse: " + response.toString());
                         try {
                             JSONObject jsonObject = new JSONObject(response);
+                            Log.e(TAG, jsonObject.has("error") + "");
                             if (jsonObject.has("error")){
 
                                 String errorMsg = jsonObject.getString("message");
@@ -158,13 +161,15 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e(TAG, "LOGIN onErrorResponse: " + error.getMessage());
                         // hide the progress dialog
                         hideDialog();
-                        Toast.makeText(getApplicationContext(), "Sai Email hoặc mật khẩu", Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(LoginActivity.this, "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
                     }
             }){
 
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/json");
                 headers.put("Content-Type", "application/x-www-form-urlencoded");
                 return headers;
             }
@@ -193,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.e(TAG, "checkActive onResponse: " + response.toString());
-
+                        hideDialog();
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             AppConfig.EMAIL = email;
@@ -207,12 +212,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             AppConfig.AGE = Integer.parseInt(getAge(year, month, day));
                             String s = jsonObject.getString("status");
-                            if (s == "0"){
-                                Toast.makeText(getApplicationContext(),
-                                        "Tài khoản của bạn chưa được kích hoạt", Toast.LENGTH_LONG).show();
-                            }
-
-                            else{
+                            if (s.equals("1")){
                                 AppConfig.ACCESS_TOKEN = access_token;
                                 AppConfig.TOKEN_TYPE = token_type;
                                 AppConfig.REFRESH_TOKEN = refresh_token;
@@ -220,6 +220,12 @@ public class LoginActivity extends AppCompatActivity {
                                 session.setToken();
                                 session.setProfile();
                                 onLoginSuccess();
+                            }
+
+                            else{
+                                Toast.makeText(getApplicationContext(),
+                                        "Tài khoản của bạn chưa được kích hoạt", Toast.LENGTH_LONG).show();
+
                             }
 
                         }catch (JSONException e){
@@ -235,7 +241,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e(TAG, "checkActive onErrorResponse: " + error.getMessage());
                 // hide the progress dialog
                 hideDialog();
-
                 Toast.makeText(LoginActivity.this, "Lỗi kết nối! Vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         }){
@@ -276,23 +281,28 @@ public class LoginActivity extends AppCompatActivity {
     private void onLoginSuccess(){
         hideDialog();
 
-        Toast.makeText(getApplicationContext(), "Bạn đã đăng nhập thành công", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
+    private boolean isValidEmail(String email){
+        if (email.isEmpty() || email.contains(" "))
+            return false;
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
     //validate input values
     private boolean validate(){
         boolean valid = true;
 
-        String username = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
+        email = etEmail.getText().toString();
+        password = etPassword.getText().toString();
 
-        if (username.isEmpty() || username.contains(" ")){
-            etEmail.setError("Vui lòng nhập tên đăng nhập hợp lệ");
+        if (isValidEmail(email) == false){
+            etEmail.setError("Vui lòng nhập email hợp lệ");
             valid = false;
         }
-        else etEmail    .setError(null);
+        else etEmail.setError(null);
         if (password.isEmpty() || password.length() < 6){
             etPassword.setError("Mật khẩu phải lớn hơn 6 ký tự");
             valid = false;

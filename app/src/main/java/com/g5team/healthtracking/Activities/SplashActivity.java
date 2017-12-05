@@ -40,8 +40,8 @@ public class SplashActivity extends AppCompatActivity{
         });
     }
     private void initialize(){
-        btnLogin = (Button)findViewById(R.id.btn_login_sp);
-        btnRegister = (Button)findViewById(R.id.btn_register_sp);
+        btnLogin = (Button) findViewById(R.id.btn_login_sp);
+        btnRegister = (Button) findViewById(R.id.btn_register_sp);
         String[] permissionsRequired = new String[]{Manifest.permission.INTERNET};
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.INTERNET) == PackageManager.PERMISSION_DENIED ||

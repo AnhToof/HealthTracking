@@ -30,15 +30,15 @@ public class HeartBeatView extends View {
     public HeartBeatView(Context context, AttributeSet attr) {
         super(context, attr);
 
-        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dark_icon);
-        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.red_icon);
+        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unbeat);
+        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.beat);
     }
 
     public HeartBeatView(Context context) {
         super(context);
 
-        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dark_icon);
-        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.red_icon);
+        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unbeat);
+        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.beat);
     }
 
     /**

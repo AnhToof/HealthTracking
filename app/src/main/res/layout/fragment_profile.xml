@@ -15,7 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
             <TextView
                 android:id="@+id/textView1"
@@ -130,14 +132,15 @@
                 android:layout_marginTop="5dp"
                 android:text="Cập nhật"
                 android:textColor="@color/white"/>
+
             <Button
 
                 android:id="@+id/btn_change_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/blue"
+                android:backgroundTint="@color/red"
                 android:text="Đổi mật khẩu"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

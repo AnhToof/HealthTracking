@@ -31,7 +31,6 @@ public class CircleProgressBar extends View {
     private float progress = 0;
     private int min = 0;
     private int max = 100;
-    private boolean isFinish = false;
     private ObjectAnimator objectAnimator;
 
     @Override
@@ -57,17 +56,7 @@ public class CircleProgressBar extends View {
     private static int parentHeight = 0;
 
 
-    public float getStrokeWidth() {
-        return strokeWidth;
-    }
 
-    public void setStrokeWidth(float strokeWidth) {
-        this.strokeWidth = strokeWidth;
-        backgroundPaint.setStrokeWidth(strokeWidth);
-        foregroundPaint.setStrokeWidth(strokeWidth);
-        invalidate();
-        requestLayout();//Because it should recalculate its bounds
-    }
 
     public float getProgress() {
         return progress;
@@ -78,23 +67,7 @@ public class CircleProgressBar extends View {
         invalidate();
     }
 
-    public int getMin() {
-        return min;
-    }
 
-    public void setMin(int min) {
-        this.min = min;
-        invalidate();
-    }
-
-    public int getMax() {
-        return max;
-    }
-
-    public void setMax(int max) {
-        this.max = max;
-        invalidate();
-    }
 
     public int getColor() {
         return color;
@@ -140,8 +113,8 @@ public class CircleProgressBar extends View {
         foregroundPaint.setStyle(Paint.Style.STROKE);
         foregroundPaint.setStrokeWidth(strokeWidth);
 
-        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dark_icon);
-        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.red_icon);
+        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unbeat);
+        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.beat);
     }
 
     @Override
@@ -154,9 +127,16 @@ public class CircleProgressBar extends View {
 
         if (canvas == null) throw new NullPointerException();
         Bitmap bitmap = null;
-        if (MeasureFragment.getCurrent() == MeasureFragment.TYPE.DARK) bitmap = darkBitmap;
-        else bitmap = redBitmap;
-        bitmap = Bitmap.createScaledBitmap(bitmap, 230, 230, false);
+        if (MeasureFragment.getCurrent() == MeasureFragment.TYPE.DARK){
+            bitmap = darkBitmap;
+
+
+        }
+        else{
+
+            bitmap = redBitmap;
+        }
+        bitmap = Bitmap.createScaledBitmap(bitmap, 110, 110, false);
         int bitmapX = bitmap.getWidth() / 2;
         int bitmapY = bitmap.getHeight() / 2;
 
@@ -188,23 +168,6 @@ public class CircleProgressBar extends View {
         setMeasuredDimension(parentWidth, parentHeight);
     }
 
-    /**
-     * Lighten the given color by the factor
-     *
-     * @param color  The color to lighten
-     * @param factor 0 to 4
-     * @return A brighter color
-     */
-    public int lightenColor(int color, float factor) {
-        float r = Color.red(color) * factor;
-        float g = Color.green(color) * factor;
-        float b = Color.blue(color) * factor;
-        int ir = Math.min(255, (int) r);
-        int ig = Math.min(255, (int) g);
-        int ib = Math.min(255, (int) b);
-        int ia = Color.alpha(color);
-        return (Color.argb(ia, ir, ig, ib));
-    }
 
     /**
      * Transparent the given color by the factor
@@ -222,9 +185,6 @@ public class CircleProgressBar extends View {
         return Color.argb(alpha, red, green, blue);
     }
 
-    public boolean isFinish(){
-        return isFinish;
-    }
     public void setProgressWithAnimation() {
         objectAnimator = ObjectAnimator.ofFloat(this, "progress", 0, 100);
         objectAnimator.setDuration(20000);
