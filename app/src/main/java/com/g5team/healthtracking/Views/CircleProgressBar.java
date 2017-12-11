@@ -113,8 +113,8 @@ public class CircleProgressBar extends View {
         foregroundPaint.setStyle(Paint.Style.STROKE);
         foregroundPaint.setStrokeWidth(strokeWidth);
 
-        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unbeat);
-        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.beat);
+        darkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_unbeat);
+        redBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_beat);
     }
 
     @Override

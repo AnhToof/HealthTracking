@@ -97,7 +97,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:clickable="true"
-                    android:src="@drawable/datepicker"
+                    android:src="@drawable/ic_date_picker"
                     app:fabSize="mini" />
 
             </LinearLayout>

@@ -461,7 +461,7 @@ public class MeasureFragment extends Fragment implements SurfaceHolder.Callback{
         double Q = AppConfig.SEX == true ? 5 : 4.5; // Liters per minute of blood through heart
         double ejectionTime = 364.5 - 1.23 * heartRate; //for not laying down
         double bodySurfaceArea = 0.007184 * (Math.pow(AppConfig.WEIGTH, 0.425)) * (Math.pow(AppConfig.HEIGHT, 0.725));
-        double strokeVolume = -6.6 + 0.25 * (ejectionTime - 35) - 0.62 * heartRate + 40.4 * bodySurfaceArea - 0.51 * AppConfig.AGE; // Volume of blood pumped from heart in one beat
+        double strokeVolume = -6.6 + 0.25 * (ejectionTime - 35) - 0.62 * heartRate + 40.4 * bodySurfaceArea - 0.51 * AppConfig.AGE; // Volume of blood pumped from heart in one ic_beat
         double pulsePressure = Math.abs(strokeVolume / ((0.013 * AppConfig.WEIGTH - 0.007 * AppConfig.AGE - 0.004 * heartRate) + 1.307));
         double meanPulsePressure = Q * R;
 

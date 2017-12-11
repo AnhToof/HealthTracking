@@ -20,8 +20,8 @@ public class AppConfig {
     public static String URL_LOGIN = "http://192.168.42.218:8000/api/login";
     public static String URL_REGISTER = "http://192.168.42.218:8000/api/register";
     public static String URL_LOGOUT = "http://192.168.42.218:8000/api/logout";
-    public static String URL_SHOW = "http://192.168.42.218:8000/api/user";
-    public static String URL_EDIT = "http://192.168.42.218:8000/api/user";
+    public static String URL_SHOW = "http://192.168.42.218:8000/api/ic_user";
+    public static String URL_EDIT = "http://192.168.42.218:8000/api/ic_user";
     public static String URL_RESULT = "http://192.168.42.218:8000/api/results";
     public static String URL_CHANGE_PASS = "http://192.168.42.218:8000/api/change";
     public static String URL_HRDIAGNOSE = "http://192.168.42.218:8000/api/hrdiagnoses";

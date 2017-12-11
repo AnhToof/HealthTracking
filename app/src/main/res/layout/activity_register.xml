@@ -130,7 +130,7 @@
             android:layout_weight="1"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/datepicker" />
+            app:srcCompat="@drawable/ic_date_picker" />
 
     </LinearLayout>
 

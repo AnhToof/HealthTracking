@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                 R.style.Theme_AppCompat_DayNight_Dialog_Alert);
 
         session = new SessionManager(getApplicationContext());
-        // Check if user is already logged in or not
+        // Check if ic_user is already logged in or not
         if (session.isLoggedIn()) {
             AppConfig.ACCESS_TOKEN = session.getKey();
             AppConfig.TOKEN_TYPE = session.getType();
@@ -188,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    //check user account which is active or not
+    //check ic_user account which is active or not
     private void checkActive(final String token_type, final String access_token, final String refresh_token) {
 
          final StringRequest stringRequest = new StringRequest(Request.Method.GET,
